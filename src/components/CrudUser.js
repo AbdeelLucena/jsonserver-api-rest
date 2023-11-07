@@ -1,67 +1,45 @@
-import React, { useState, useEffect } from "react"
-import Form from "./Form"
-import Table from "./Table"
+import React, { useState, useEffect } from "react"; // Importa as bibliotecas React, useState e useEffect
+import { httpHelper } from "../helpers/httpHelper"; // Importa a função httpHelper de um módulo externo
 
-import { httpHelper } from "../helpers/httpHelper"
+// Define o componente DropCompanies, que recebe as props companiesId e handleValue
+const DropCompanies = ({ companiesId, handleValue }) => {
+	const [companies, setCompanies] = useState(null); // Inicializa o estado para armazenar a lista de empresas
+	const [company, setCompany] = useState(companiesId); // Inicializa o estado para armazenar o ID da empresa selecionada
 
-const CrudUser = () => {
-	const [users, setUsers] = useState(null)
+	const url = "http://localhost:5000/companies"; // Define a URL da API de empresas
+	const api = httpHelper(); // Chama a função httpHelper para criar um objeto de utilitário de requisição HTTP
 
-	const url = "http://localhost:5000/users"
-	const api = httpHelper()
-
+	// Utiliza o hook useEffect para buscar a lista de empresas quando o componente é montado
 	useEffect(() => {
-		getUsers()
-	}, [])
-
-	const postUser = user => {
 		api
-			.post(`${url}`, { body: user })
-			.then(res => getUsers())
-			.catch(err => console.log(err))
-	}
-
-	const updateUser = (id, user) => {
-		api
-			.put(`${url}/${id}`, { body: user })
-			.then(res => getUsers())
-			.catch(err => console.log(err))
-	}
-
-	const deleteUser = id => {
-		api
-			.del(`${url}/${id}`, {})
-			.then(res => getUsers())
-			.catch(err => console.log(err))
-	}
-
-	const getUsers = () => {
-		api
-			.get(`${url}?_expand=companies`)
+			.get(url) // Faz uma requisição GET para a URL da API de empresas
 			.then(res => {
-				setUsers(res)
+				setCompanies([{ id: 0, name: "Select Company" }, ...res]); // Atualiza o estado com as empresas, incluindo uma opção padrão "Select Company"
 			})
-			.catch(err => console.log(err))
-	}
+			.catch(err => console.log(err)); // Lida com erros da requisição
+	}, []); // O array vazio assegura que o efeito seja executado somente uma vez durante a montagem do componente
 
-	if (!users) return null
+	// Se a lista de empresas ainda não foi carregada, retorna null para evitar erros
+	if (!companies) return null;
 
+	// Renderiza um elemento select (caixa de seleção) que permite ao usuário escolher uma empresa
 	return (
-		<>
-			<h3>New user</h3>
-			<Form postUser={postUser} />
-			<div className='all-users'>
-				<h3>All users</h3>
-				<Table
-					users={users}
-					setUsers={setUsers}
-					postUser={postUser}
-					updateUser={updateUser}
-					deleteUser={deleteUser}
-				/>
-			</div>
-		</>
-	)
+		<select
+			name='companiesId'
+			value={company}
+			onChange={e => {
+				setCompany(e.target.value); // Atualiza o estado da empresa selecionada
+				handleValue(e); // Chama a função handleValue passando o evento
+			}}
+		>
+			{companies.map(c => (
+				// Mapeia a lista de empresas para criar opções na caixa de seleção
+				<option value={c.id} key={c.id}>
+					{c.name}
+				</option>
+			))}
+		</select>
+	);
 }
 
-export default CrudUser
+export default DropCompanies; // Exporta o componente DropCompanies como padrão
