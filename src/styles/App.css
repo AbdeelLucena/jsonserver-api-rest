@@ -1,3 +1,4 @@
+/* estilização global do css */
 :root {
   --background-body: #E5E5E5;
   --background-content: #1D1D1D;
@@ -132,7 +133,7 @@ margin-top: 3rem;
 .hide-form {
   display: none;
 }
-
+/*utilização do scss  */
 @media screen and (max-width: 920px) {
   main {
     width: 90%;
