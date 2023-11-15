@@ -4,6 +4,7 @@ import Table from "./Table"; // Importa o componente Table de outro arquivo
 import { httpHelper } from "../helpers/httpHelper"; // Importa a função httpHelper de um módulo externo
 
 // Define o componente CrudUser
+
 const CrudUser = () => {
   const [users, setUsers] = useState(null); // Inicializa o estado para armazenar a lista de usuários
 
@@ -15,23 +16,29 @@ const CrudUser = () => {
     getUsers(); // Chama a função getUsers para buscar os usuários
   }, []);
 
+  
   // Função para adicionar um novo usuário
+  
   const postUser = user => {
     api
       .post(`${url}`, { body: user }) // Envia uma requisição POST para a URL da API para adicionar um usuário
       .then(res => getUsers()) // Após a conclusão da operação, busca novamente a lista de usuários
       .catch(err => console.log(err)); // Lida com erros da requisição
   }
+  
 
   // Função para atualizar um usuário existente
+  
   const updateUser = (id, user) => {
     api
       .put(`${url}/${id}`, { body: user }) // Envia uma requisição PUT para a URL da API para atualizar um usuário
       .then(res => getUsers()) // Após a conclusão da operação, busca novamente a lista de usuários
       .catch(err => console.log(err)); // Lida com erros da requisição
   }
+  
 
   // Função para excluir um usuário
+  
   const deleteUser = id => {
     api
       .del(`${url}/${id}`, {}) // Envia uma requisição DELETE para a URL da API para excluir um usuário
@@ -39,20 +46,25 @@ const CrudUser = () => {
       .catch(err => console.log(err)); // Lida com erros da requisição
   }
 
-  // Função para buscar a lista de usuários
+  
+  // Função que busca a lista de usuários
+  
   const getUsers = () => {
     api
       .get(`${url}?_expand=companies`) // Envia uma requisição GET para a URL da API para buscar a lista de usuários e suas empresas
       .then(res => {
         setUsers(res); // Atualiza o estado com a lista de usuários
       })
-      .catch(err => console.log(err)); // Lida com erros da requisição
+      .catch(err => console.log(err)); // Lida com erros de requisição
   }
+  
 
   // Se a lista de usuários ainda não foi carregada, retorna null para evitar erros
+  
   if (!users) return null;
 
   // Renderiza o componente CrudUser
+  
   return (
     <>
       <h3>New user</h3>
